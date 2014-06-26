@@ -42,7 +42,7 @@ var forceToRange = function(n, min, max) {
 
 var canvas,
     screen
-    ASTEROID_COUNT = 2,
+    ASTEROID_COUNT = 3,
     ASTEROID_MAX_SPEED = 3,
     ASTEROID_SIZES = [15, 20, 28, 36, 44];
 
@@ -67,7 +67,7 @@ var Game = function(canvasId) {
                                         }, {
                                             x: Math.random()*ASTEROID_MAX_SPEED,
                                             y: Math.random()*ASTEROID_MAX_SPEED
-                                        }, Math.floor(Math.random()*4 + 1)
+                                        }, Math.floor(Math.random()*3 + 2)
         ));
     }
 
@@ -166,7 +166,7 @@ Bullet.prototype = {
         this.center.y += this.velocity.y;
     },
     draw : function(screen) {
-        screen.fillStyle = "rgb(0,0,0)";
+        screen.fillStyle = "rgb(250,250,250)";
         drawRect(screen, this);
     },
     collision: function() {
@@ -246,11 +246,12 @@ Player.prototype = {
             p3 = rotate2d({ x: -10, y: 10 }, this.rotation);
 
         screen.beginPath();
-        screen.fillStyle = "rgb(0,0,0)";
+        screen.strokeStyle = "rgb(250,250,250)";
         screen.moveTo(this.center.x + p1.x, this.center.y + p1.y);
         screen.lineTo(this.center.x + p2.x, this.center.y + p2.y);
         screen.lineTo(this.center.x + p3.x, this.center.y + p3.y);
         screen.closePath();
+        screen.lineWidth = 1;
         screen.stroke();
     },
     collision: function(obj) {
