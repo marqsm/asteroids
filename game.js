@@ -29,6 +29,12 @@ var drawRect = function(screen, body) {
                 body.size.x, body.size.y);
 };
 
+var forceToRange = function(n, min, max) {
+    if      (n > max) return min;
+    else if (n < min) return max;
+    return n;
+};
+
 
 /**********************************************
  * Game variables & code.
@@ -49,6 +55,17 @@ var Game = function(canvasId) {
 
     this.bodies = [];
     this.bodies = this.bodies.concat(new Player(this, gameSize));
+
+    for (var i=0; i < 5; i++) {
+        this.bodies = this.bodies.concat(new Asteroid(gameSize, {
+                                            x: Math.random()*gameSize.x,
+                                            y: Math.random()*gameSize.y
+                                        }, {
+                                            x: Math.random()*4,
+                                            y: Math.random()*4
+                                        }
+        ));
+    }
 
     var self = this;
 
@@ -160,20 +177,14 @@ Player.prototype = {
             this.velocity.y = this.velocity.y * this.FRICTION;
         }
 
+        // move ship
         this.center.x += this.velocity.x;
         this.center.y += this.velocity.y;
 
-        // If went over the edge, teleport to other edge.
-        if (this.center.x > this.gameSize.x) {
-            this.center.x = 0;
-        } else if (this.center.x < 0) {
-            this.center.x = this.gameSize.x;
-        }
-        if (this.center.y > this.gameSize.y) {
-            this.center.y = 0;
-        } else if (this.center.y < 0) {
-            this.center.y = this.gameSize.y;
-        }
+        //f went over the edge, teleport to other edge.
+        this.center.x = forceToRange(this.center.x, 0, this.gameSize.x);
+        this.center.y = forceToRange(this.center.y, 0, this.gameSize.y);
+
 
         // calculate velocity to new frame
         // console.log('dx: ' + this.velocity.x + ' dy: ' + this.velocity.y + ' speed: ' + this.SPEED + ' rotation: ' + this.rotation);
@@ -216,6 +227,32 @@ var Keyboarder = function() {
     }
 }
 
+
+var Asteroid = function(gameSize, center, velocity) {
+    this.center = center;
+    this.gameSize = gameSize;
+    this.velocity = velocity;
+    this.size = {
+        x: 15,
+        y: 15
+    }
+    return this;
+}
+
+Asteroid.prototype = {
+    update: function() {
+        this.center.x += this.velocity.x;
+        this.center.y += this.velocity.y;
+
+        //f went over the edge, teleport to other edge.
+        this.center.x = forceToRange(this.center.x, 0, this.gameSize.x);
+        this.center.y = forceToRange(this.center.y, 0, this.gameSize.y);
+
+    },
+    draw : function(screen) {
+        drawRect(screen, this);
+    }
+}
 
 /**********************************************
  * Initialization
